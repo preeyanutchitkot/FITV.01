@@ -1,0 +1,46 @@
+.login-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: 16px 0 4px 0;
+}
+.login-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+  border-radius: 1px;
+}
+.login-divider-label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.login-footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 0px;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  flex-direction: row;
+}
+.login-footer-note img {
+  width: 15px;
+  height: 15px;
+  opacity: 0.7;
+  margin-bottom: 0;
+}
+@media (max-width: 500px) {
+  .login-divider-label, .login-footer-note {
+    font-size: 0.75rem;
+  }
+  .login-footer-note img {
+    width: 13px;
+    height: 13px;
+  }
+}

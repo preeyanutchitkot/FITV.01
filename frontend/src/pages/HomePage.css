@@ -1,0 +1,203 @@
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+}
+
+.fitaddict-bg {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.fitaddict-navbar {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(16px);
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 6px 24px -4px rgba(99,102,241,0.10), 0 1.5px 6px 0 rgba(168,85,247,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-radius: 0 0 24px 24px;
+}
+
+.fitaddict-logo {
+  font-size: 2.1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #7c3aed 0%, #a21caf 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 8px rgba(168,85,247,0.08);
+}
+
+.fitaddict-navlinks {
+  display: flex;
+  gap: 1.7rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fitaddict-navlinks li a, .nav-auth-btn {
+  color: #6366f1;
+  font-weight: 600;
+  background: none;
+  border: none;
+  font-size: 1.08rem;
+  cursor: pointer;
+  padding: 0.55rem 1.5rem;
+  border-radius: 100px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(168,85,247,0.04);
+}
+.fitaddict-navlinks li a:hover, .nav-auth-btn:hover {
+  background: #ede9fe;
+  color: #a855f7;
+  box-shadow: 0 2px 8px rgba(168,85,247,0.10);
+}
+
+.fitaddict-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+}
+
+.fitaddict-hero {
+  text-align: center;
+  margin: 2.5rem 0 3.5rem;
+  padding: 2.5rem 2rem 2.5rem 2rem;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(14px);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px 0 rgba(30,41,59,0.13), 0 2px 8px 0 rgba(168,85,247,0.10);
+  position: relative;
+  overflow: hidden;
+}
+.fitaddict-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, #a855f7 0%, #f8fafc 80%);
+  opacity: 0.08;
+  border-radius: 50%;
+  z-index: 0;
+}
+.fitaddict-hero > * {
+  position: relative;
+  z-index: 1;
+}
+.fitaddict-hero h1 {
+  font-size: 2.7rem;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  margin-bottom: 1.1rem;
+  letter-spacing: -0.03em;
+  font-weight: 900;
+}
+.fitaddict-hero span {
+  background: linear-gradient(90deg, #7c3aed 0%, #a21caf 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 900;
+}
+.fitaddict-hero p {
+  color: #64748b;
+  font-size: 1.13rem;
+  max-width: 600px;
+  margin: 0 auto 1.7rem;
+  line-height: 1.7;
+}
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.7rem;
+}
+.fitaddict-btn {
+  padding: 0.85rem 2.2rem;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #7c3aed 0%, #a21caf 50%, #a855f7 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.13rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(168,85,247,0.13);
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+.fitaddict-btn:hover {
+  background: #a855f7;
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(168,85,247,0.18);
+}
+.fitaddict-features {
+  margin: 3.5rem 0 2.5rem 0;
+}
+.fitaddict-features-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2.2rem;
+}
+.fitaddict-feature-card {
+  background: rgba(255,255,255,0.96);
+  padding: 2.1rem 1.5rem 2.1rem 1.5rem;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(30,41,59,0.10), 0 2px 8px 0 rgba(168,85,247,0.08);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1.5px solid #ede9fe;
+}
+.fitaddict-feature-card:hover {
+  box-shadow: 0 12px 36px 0 rgba(168,85,247,0.13), 0 4px 16px 0 rgba(168,85,247,0.10);
+  border-color: #a855f7;
+  transform: translateY(-2px) scale(1.03);
+}
+.fitaddict-feature-card h3 {
+  color: #7c3aed;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.fitaddict-feature-card p {
+  color: #475569;
+  font-size: 1.04rem;
+}
+.fitaddict-about, .fitaddict-contact {
+  background: rgba(255,255,255,0.82);
+  border-radius: 24px;
+  padding: 2.2rem 1.5rem 2.2rem 1.5rem;
+  margin-bottom: 2.2rem;
+  box-shadow: 0 2px 12px rgba(168,85,247,0.10);
+}
+.fitaddict-about h2, .fitaddict-contact h2, .fitaddict-features h2 {
+  color: #a855f7;
+  font-size: 2.1rem;
+  margin-bottom: 1.1rem;
+  font-weight: 800;
+}
+.fitaddict-footer {
+  text-align: center;
+  color: #64748b;
+  padding: 2.2rem 0 1.2rem 0;
+  font-size: 1.04rem;
+  background: none;
+  letter-spacing: 0.01em;
+}

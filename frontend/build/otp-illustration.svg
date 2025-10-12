@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="200" cy="150" r="120" fill="#EEF2FF" opacity="0.5"/>
+    <circle cx="200" cy="150" r="80" fill="#E0E7FF" opacity="0.3"/>
+    
+    <!-- Message Box -->
+    <rect x="120" y="100" width="160" height="100" rx="10" fill="#4F46E5"/>
+    <rect x="130" y="110" width="140" height="80" rx="5" fill="#818CF8"/>
+    
+    <!-- OTP Digits -->
+    <rect x="140" y="130" width="25" height="40" rx="5" fill="#EEF2FF"/>
+    <rect x="175" y="130" width="25" height="40" rx="5" fill="#EEF2FF"/>
+    <rect x="210" y="130" width="25" height="40" rx="5" fill="#EEF2FF"/>
+    <rect x="245" y="130" width="25" height="40" rx="5" fill="#EEF2FF"/>
+    
+    <!-- Sparkles -->
+    <circle cx="120" cy="90" r="3" fill="#4F46E5"/>
+    <circle cx="280" cy="90" r="3" fill="#4F46E5"/>
+    <circle cx="120" cy="210" r="3" fill="#4F46E5"/>
+    <circle cx="280" cy="210" r="3" fill="#4F46E5"/>
+</svg> 

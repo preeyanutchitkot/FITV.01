@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="200" cy="150" r="120" fill="#EEF2FF" opacity="0.5"/>
+    <circle cx="200" cy="150" r="80" fill="#E0E7FF" opacity="0.3"/>
+    
+    <!-- Success Circle -->
+    <circle cx="200" cy="150" r="60" fill="#4F46E5"/>
+    <circle cx="200" cy="150" r="50" fill="#818CF8"/>
+    
+    <!-- Checkmark -->
+    <path d="M170 150L190 170L230 130" stroke="#EEF2FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Sparkles -->
+    <circle cx="130" cy="100" r="3" fill="#4F46E5"/>
+    <circle cx="270" cy="100" r="3" fill="#4F46E5"/>
+    <circle cx="130" cy="200" r="3" fill="#4F46E5"/>
+    <circle cx="270" cy="200" r="3" fill="#4F46E5"/>
+</svg> 

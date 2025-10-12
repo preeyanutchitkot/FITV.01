@@ -1,0 +1,80 @@
+/* src/pages/AdminTrainerView.css */
+.atv-shell {
+  background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+  min-height: 100vh;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.atv-topbar {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.atv-back {
+  background: transparent; border: none; cursor: pointer;
+  font-size: 1rem; color: #111827;
+}
+.atv-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #e5e7eb; }
+.atv-name { font-weight: 800; }
+.atv-email { margin-left: auto; color: #94a3b8; font-size: 13px; }
+
+.atv-container {
+  background:#f3f4f6; border-radius:20px; box-shadow:0 2px 24px rgba(0,0,0,.10);
+  max-width:1400px; margin:0 auto 2rem; padding:2.2rem 2.6rem; min-height:800px;
+  display:flex; gap:40px; align-items:flex-start;
+}
+
+/* aside (member list) */
+.atv-aside {
+  background:#fff; border-radius:24px; padding:1.8rem 1.6rem;
+  box-shadow:0 2px 16px rgba(0,0,0,0.06);
+  min-width:320px; max-width:360px; flex:0 0 340px;
+  display:flex; flex-direction:column; gap:14px;
+}
+.atv-aside-head { display:flex; align-items:center; gap:12px; }
+.atv-aside-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb; }
+.atv-aside-title { font-weight:800; font-size:1.1rem; color:#23272e; }
+.atv-dot-online { width:10px; height:10px; border-radius:50%; background:#22c55e; margin-left:6px; }
+.atv-divider { border:none; border-top:2px solid #e5e7eb; margin:8px 0; }
+.atv-aside-sub { font-weight:700; font-size:1rem; }
+
+.atv-list-scroll { max-height:520px; overflow-y:auto; padding-right:4px; }
+.atv-empty { color:#64748b; }
+
+.atv-row {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 6px; border-radius:12px; border:1px solid #eef2ff; margin-bottom:8px; background:#fff;
+}
+.atv-row-main {
+  display:flex; align-items:center; gap:10px; background:transparent; border:none; text-align:left; cursor:pointer; flex:1;
+}
+.atv-row-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb; }
+.atv-row-info { overflow:hidden; }
+.atv-row-name { font-weight:700; color:#111827; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.atv-row-email { color:#64748b; font-size:13px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.atv-row-status { width:10px; height:10px; border-radius:50%; background:#22c55e; margin-left:auto; }
+.atv-kebab { background:transparent; border:none; color:#6b7280; font-size:18px; padding:0 6px; cursor:default; }
+
+/* main (videos) */
+.atv-main { flex:1; }
+.atv-main-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.atv-main-title { font-weight:700; font-size:1.18rem; color:#111827; }
+.atv-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:48px;
+}
+.atv-loading { color:#64748b; }
+
+
+/* src/pages/AdminTrainerView.css (ไฟล์เดียวกับของเดิมได้) */
+.trainer-morebar{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#9ca3af; color:#fff; font-weight:700;
+  padding:10px 14px; border-radius:10px; border:0; cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.trainer-morebar:hover{ filter:brightness(0.95); }
+.trainer-morebar .icon{ font-size:14px; line-height:1; }
+

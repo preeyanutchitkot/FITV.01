@@ -1,0 +1,22 @@
+/* Centered auth card, less wide and more vertical */
+.auth-screen {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f8fafc;
+	font-family: system-ui, sans-serif;
+}
+
+.auth-card {
+	background: #fff;
+	max-width: 640px;
+	min-height: 220px;
+	width: 100%;
+	padding: 36px 56px 32px 56px;
+	border-radius: 20px;
+	box-shadow: 0 8px 32px 0 rgba(30,41,59,0.13), 0 2px 8px 0 rgba(168,85,247,0.10);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}

@@ -1,0 +1,851 @@
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import KeypointOverlay from '../components/KeypointOverlay';
+import { multiDirectionalPoseComparator } from '../utils/MultiDirectionalPoseComparator';
+import { videoSectionManager } from '../utils/VideoSectionManager';
+import './WorkoutPage.css';
+import '../components/Dashboard.css';
+
+const WorkoutPage = () => {
+  const { videoId } = useParams();
+  const navigate = useNavigate();
+  
+  // Refs for video and camera
+  const trainerVideoRef = useRef(null);
+  const traineeVideoRef = useRef(null);
+  const traineeCanvasRef = useRef(null);
+  
+  // States
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [videoData, setVideoData] = useState(null);
+  const [segments, setSegments] = useState([]);
+  const [currentSegment, setCurrentSegment] = useState(0);
+  const [loading, setLoading] = useState(true);
+  
+  // Section-based scoring states
+  const [currentSection, setCurrentSection] = useState(null);
+  const [sectionScore, setSectionScore] = useState(null);
+  const [sessionSummary, setSessionSummary] = useState(null);
+            <button 
+              className="close-summary"
+              onClick={() => setSessionSummary(null)}
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="summary-content">
+            <div className="overall-stats">
+              <div className="stat-item">
+                <span className="stat-label">Overall Score:</span>
+                <span className="stat-value">{sessionSummary.overallScore.toFixed(1)}%</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Active Frames:</span>
+                <span className="stat-value">{sessionSummary.movementFrames} / {sessionSummary.totalFrames}</span>
+              </div>
+            </div>
+            
+            <div className="section-breakdown">
+              <h4>Section Performance:</h4>
+              {Object.entries(sessionSummary.sectionBreakdown || {}).map(([section, data]) => (
+                <div key={section} className="section-summary">
+                  <div className="section-header">
+                    <span className="section-name">{section}</span>
+                    <span className="section-score">{data.averageScore.toFixed(1)}%</span>
+                  </div>
+                  <div className="body-part-breakdown">
+                    {Object.entries(data.bodyPartAverages).map(([part, score]) => (
+                      <div key={part} className="body-part-stat">
+                        <span>{part}: {score.toFixed(1)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="recommendations">
+              <h4>💡 Recommendations:</h4>
+              <ul>
+                {sessionSummary.recommendations.map((rec, index) => (
+                  <li key={index}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};a] = useState(null);
+  const [segments, setSegments] = useState([]);
+  const [currentSegment, setCurrentSegment] = useState(0);
+  const [loading, setLoading] = useState(true);
+  
+  // Section-based scoring states
+  const [currentSection, setCurrentSection] = useState(null);
+  const [sectionScore, setSectionScore] = useState(null);
+  const [sessionSummary, setSessionSummary] = useState(null);
+  
+  // Camera and keypoints states
+  const [cameraStream, setCameraStream] = useState(null);
+  const [traineeKeypoints, setTraineeKeypoints] = useState(null);
+  const [trainerKeypoints, setTrainerKeypoints] = useState(null);
+  const [cameraError, setCameraError] = useState(null);
+  
+  // Scoring states - Multi-Directional Analysis
+  const [matchScore, setMatchScore] = useState(0);
+  const [feedback, setFeedback] = useState('เริ่มต้นออกกำลังกาย');
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [bodyPartScores, setBodyPartScores] = useState({});
+  const [jointComparisons, setJointComparisons] = useState({});
+  const [trainerDirection, setTrainerDirection] = useState('UNKNOWN');
+  const [traineeDirection, setTraineeDirection] = useState('UNKNOWN');
+  const [confidenceLevel, setConfidenceLevel] = useState(0);
+  const [recommendations, setRecommendations] = useState([]);
+  
+  // Session tracking
+  const [sessionStartTime, setSessionStartTime] = useState(null);
+  const [sessionScores, setSessionScores] = useState([]);
+
+  // Load video data and segments
+  useEffect(() => {
+    const loadVideoData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:8000/videos/${videoId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error('Failed to load video');
+        
+        const data = await response.json();
+        console.log('📺 Video data loaded:', data);
+        setVideoData(data);
+        
+        // Reset playing state when new video loads
+        setIsPlaying(false);
+        
+        // Load segments
+        const segmentsResponse = await fetch(`http://localhost:8000/videos/${videoId}/segments`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (segmentsResponse.ok) {
+          const segmentsData = await segmentsResponse.json();
+          const segments = segmentsData.segments || [];
+          setSegments(segments);
+          
+          // Initialize VideoSectionManager with segments
+          videoSectionManager.setSections(segments);
+          console.log('🎬 VideoSectionManager initialized with sections:', segments);
+        }
+        
+      } catch (error) {
+        console.error('Error loading video data:', error);
+        alert('ไม่สามารถโหลดข้อมูลวิดีโอได้');
+        navigate('/trainee');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadVideoData();
+  }, [videoId, navigate]);
+
+  // Camera permission states  
+  const [cameraPermissionState, setCameraPermissionState] = useState('not-requested'); // 'not-requested', 'requesting', 'granted', 'denied'
+  const [userRequestedCamera, setUserRequestedCamera] = useState(false);
+
+  // Debug log for states
+  useEffect(() => {
+    console.log('WorkoutPage State:', {
+      userRequestedCamera,
+      cameraPermissionState,
+      cameraStream: !!cameraStream,
+      cameraError,
+      isInitialized
+    });
+  }, [userRequestedCamera, cameraPermissionState, cameraStream, cameraError, isInitialized]);
+
+  // Request camera permission function
+  const requestCameraPermission = useCallback(async () => {
+    console.log('🎥 requestCameraPermission called');
+    setCameraPermissionState('requesting');
+    setUserRequestedCamera(true);
+    
+    try {
+      console.log('กำลังขออนุญาตใช้กล้อง...');
+      
+      // Check if mediaDevices is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Browser ไม่รองรับการเข้าถึงกล้อง');
+      }
+      
+      const constraints = {
+        video: { 
+          width: { ideal: 640 }, 
+          height: { ideal: 480 }, 
+          facingMode: 'user'
+        },
+        audio: false
+      };
+      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('เปิดกล้องสำเร็จ:', stream);
+      
+      setCameraStream(stream);
+      setCameraPermissionState('granted');
+      setCameraError(null);
+      
+      console.log('✅ Camera stream state updated');
+      
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      
+      let errorMessage = 'ไม่สามารถเข้าถึงกล้องได้';
+      if (error.name === 'NotAllowedError') {
+        errorMessage = 'กรุณาอนุญาตการใช้งานกล้องในเบราว์เซอร์';
+        setCameraPermissionState('denied');
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = 'ไม่พบกล้องในอุปกรณ์';
+        setCameraPermissionState('denied');
+      } else if (error.name === 'NotReadableError') {
+        errorMessage = 'กล้องถูกใช้งานโดยแอปพลิเคชันอื่น';
+        setCameraPermissionState('denied');
+      } else {
+        setCameraPermissionState('denied');
+      }
+      
+      setCameraError(errorMessage);
+      setIsInitialized(false);
+    }
+  }, []);
+
+  // Handle camera stream assignment to video element
+  useEffect(() => {
+    if (cameraStream && traineeVideoRef.current) {
+      console.log('🎯 Assigning camera stream to video element');
+      const videoElement = traineeVideoRef.current;
+      
+      // Clear any existing stream first
+      if (videoElement.srcObject) {
+        const existingStream = videoElement.srcObject;
+        if (existingStream !== cameraStream) {
+          existingStream.getTracks().forEach(track => track.stop());
+        }
+      }
+      
+      // Assign new stream
+      videoElement.srcObject = cameraStream;
+      
+      // Force play
+      videoElement.play().then(() => {
+        console.log('✅ Video playing successfully');
+        setIsInitialized(true);
+      }).catch(err => {
+        console.error('❌ Error playing video:', err);
+      });
+    }
+  }, [cameraStream]);
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [cameraStream]);
+
+  // Handle play/pause with error handling
+  const togglePlayPause = async () => {
+    if (trainerVideoRef.current) {
+      try {
+        if (isPlaying) {
+          trainerVideoRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          await trainerVideoRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.log('Video play/pause interrupted:', error);
+        // Just update the state to match actual video state
+        setIsPlaying(!trainerVideoRef.current.paused);
+      }
+    }
+  };
+
+  // Handle trainer keypoints detection (from video processing)
+  const handleTrainerKeypoints = (keypoints) => {
+    console.log('🎬 Trainer keypoints detected:', keypoints?.length || 0, 'points');
+    setTrainerKeypoints(keypoints);
+  };
+
+  // 🎬 Load sample trainer keypoints สำหรับทดสอบ
+  useEffect(() => {
+    // โหลด keypoints ทันทีเมื่อ component mount (ไม่ต้องรอ video เล่น)
+    const loadTrainerKeypoints = () => {
+      console.log('🎬 Loading default trainer keypoints for testing...');
+      
+      // สร้าง keypoints แบบ squat pose
+      const squatKeypoints = [
+        // Nose
+        { x: 0.5, y: 0.2, z: 0, visibility: 0.9 },
+        // Left/Right Eye Inner
+        { x: 0.48, y: 0.18, z: 0, visibility: 0.9 },
+        { x: 0.52, y: 0.18, z: 0, visibility: 0.9 },
+        // Left/Right Eye
+        { x: 0.47, y: 0.18, z: 0, visibility: 0.9 },
+        { x: 0.53, y: 0.18, z: 0, visibility: 0.9 },
+        // Left/Right Eye Outer
+        { x: 0.46, y: 0.18, z: 0, visibility: 0.9 },
+        { x: 0.54, y: 0.18, z: 0, visibility: 0.9 },
+        // Left/Right Ear
+        { x: 0.45, y: 0.2, z: 0, visibility: 0.9 },
+        { x: 0.55, y: 0.2, z: 0, visibility: 0.9 },
+        // Mouth Left/Right
+        { x: 0.48, y: 0.22, z: 0, visibility: 0.9 },
+        { x: 0.52, y: 0.22, z: 0, visibility: 0.9 },
+        // Left Shoulder
+        { x: 0.4, y: 0.35, z: 0, visibility: 0.9 },
+        // Right Shoulder
+        { x: 0.6, y: 0.35, z: 0, visibility: 0.9 },
+        // Left Elbow
+        { x: 0.35, y: 0.5, z: 0, visibility: 0.9 },
+        // Right Elbow
+        { x: 0.65, y: 0.5, z: 0, visibility: 0.9 },
+        // Left Wrist
+        { x: 0.3, y: 0.65, z: 0, visibility: 0.9 },
+        // Right Wrist
+        { x: 0.7, y: 0.65, z: 0, visibility: 0.9 },
+        // Left Pinky
+        { x: 0.28, y: 0.67, z: 0, visibility: 0.8 },
+        // Right Pinky
+        { x: 0.72, y: 0.67, z: 0, visibility: 0.8 },
+        // Left Index
+        { x: 0.32, y: 0.67, z: 0, visibility: 0.8 },
+        // Right Index
+        { x: 0.68, y: 0.67, z: 0, visibility: 0.8 },
+        // Left Thumb
+        { x: 0.29, y: 0.64, z: 0, visibility: 0.8 },
+        // Right Thumb
+        { x: 0.71, y: 0.64, z: 0, visibility: 0.8 },
+        // Left Hip
+        { x: 0.45, y: 0.7, z: 0, visibility: 0.9 },
+        // Right Hip
+        { x: 0.55, y: 0.7, z: 0, visibility: 0.9 },
+        // Left Knee (squat position - bent)
+        { x: 0.42, y: 0.85, z: 0, visibility: 0.9 },
+        // Right Knee (squat position - bent)
+        { x: 0.58, y: 0.85, z: 0, visibility: 0.9 },
+        // Left Ankle
+        { x: 0.4, y: 0.95, z: 0, visibility: 0.9 },
+        // Right Ankle
+        { x: 0.6, y: 0.95, z: 0, visibility: 0.9 },
+        // Left Heel
+        { x: 0.38, y: 0.97, z: 0, visibility: 0.8 },
+        // Right Heel
+        { x: 0.62, y: 0.97, z: 0, visibility: 0.8 },
+        // Left Foot Index
+        { x: 0.42, y: 0.97, z: 0, visibility: 0.8 },
+        // Right Foot Index
+        { x: 0.58, y: 0.97, z: 0, visibility: 0.8 }
+      ];
+
+      handleTrainerKeypoints(squatKeypoints);
+    };
+
+    // โหลด keypoints ทันทีเมื่อ component mount
+    loadTrainerKeypoints();
+  }, []); // Empty dependency array = run once on mount
+
+  // Log สำหรับ debug เมื่อวิดีโอเล่น
+  useEffect(() => {
+    if (isPlaying) {
+      console.log('🎬 Video is now playing, trainer keypoints should be available');
+    }
+  }, [isPlaying]);
+
+  // Handle trainee keypoints detection (real-time from camera)
+  const handleTraineeKeypoints = (keypoints) => {
+    console.log('🎯 Trainee keypoints detected:', keypoints?.length || 0, 'points');
+    setTraineeKeypoints(keypoints);
+    
+    // Get current video time
+    const currentTime = trainerVideoRef.current?.currentTime || 0;
+    
+    // 🎬 Section-based scoring with VideoSectionManager
+    if (trainerKeypoints && keypoints && segments.length > 0) {
+      console.log('🔄 Starting section-based pose comparison...');
+      
+      // Calculate section-based score
+      const sectionResult = videoSectionManager.calculateSectionScore(
+        trainerKeypoints, 
+        keypoints, 
+        currentTime
+      );
+      
+      if (sectionResult) {
+        console.log('📊 Section-based analysis:', {
+          section: sectionResult.section,
+          score: sectionResult.score,
+          hasMovement: sectionResult.hasMovement,
+          time: currentTime.toFixed(1)
+        });
+        
+        // Update current section info
+        setCurrentSection(sectionResult.section);
+        setSectionScore(sectionResult);
+        
+        // Update match score only if there's movement
+        if (sectionResult.hasMovement && sectionResult.score !== null) {
+          setMatchScore(sectionResult.score);
+          setFeedback(`${sectionResult.section}: ${sectionResult.score.toFixed(1)}% accuracy`);
+          setBodyPartScores(sectionResult.bodyPartScores);
+        } else if (!sectionResult.hasMovement) {
+          setFeedback(`${sectionResult.section}: รอการเคลื่อนไหว...`);
+        }
+        
+        // Update session summary periodically
+        const summary = videoSectionManager.getSessionSummary();
+        setSessionSummary(summary);
+      }
+      
+      // 🚀 Keep original multi-directional comparison for detailed analysis
+      const analysis = multiDirectionalPoseComparator.compareMultiDirectional(
+        trainerKeypoints, 
+        keypoints
+      );
+      
+      // Update additional analysis data
+      setJointComparisons(analysis.jointComparisons);
+      setTrainerDirection(analysis.trainerDirection);
+      setTraineeDirection(analysis.traineeDirection);
+      setConfidenceLevel(analysis.confidence);
+      setRecommendations(analysis.recommendations);
+      
+      // Track session performance
+      trackSessionData(analysis);
+    } else if (trainerKeypoints && keypoints) {
+      // Fallback to original comparison if no sections
+      console.log('⚠️ No sections available, using original comparison');
+      
+      const analysis = multiDirectionalPoseComparator.compareMultiDirectional(
+        trainerKeypoints, 
+        keypoints
+      );
+      
+      setMatchScore(analysis.accuracy);
+      setFeedback(analysis.feedback);
+      setBodyPartScores(analysis.bodyPartScores);
+      setJointComparisons(analysis.jointComparisons);
+      setTrainerDirection(analysis.trainerDirection);
+      setTraineeDirection(analysis.traineeDirection);
+      setConfidenceLevel(analysis.confidence);
+      setRecommendations(analysis.recommendations);
+      
+      trackSessionData(analysis);
+    } else {
+      console.log('❌ Cannot compare poses:', {
+        hasTrainer: !!trainerKeypoints,
+        hasTrainee: !!keypoints,
+        hasSections: segments.length > 0,
+        trainerLength: trainerKeypoints?.length || 0,
+        traineeLength: keypoints?.length || 0
+      });
+    }
+  };
+
+  // Track session performance data
+  const trackSessionData = (analysis) => {
+    if (!sessionStartTime) {
+      setSessionStartTime(Date.now());
+    }
+    
+    setSessionScores(prev => [...prev, {
+      timestamp: Date.now(),
+      accuracy: analysis.accuracy,
+      confidence: analysis.confidence,
+      bodyPartScores: analysis.bodyPartScores
+    }]);
+  };
+
+  // 🚀 Old comparison algorithms replaced by Multi-Directional Pose Comparator
+  // All pose analysis logic moved to utils/MultiDirectionalPoseComparator.js
+
+  if (loading) {
+    return (
+      <div className="workout-loading">
+        <div className="running-loader">
+          <div className="runner">
+            <div className="head"></div>
+            <div className="torso"></div>
+            <div className="arm arm-right"></div>
+            <div className="arm arm-left"></div>
+            <div className="leg leg-right"></div>
+            <div className="leg leg-left"></div>
+            <div className="shadow"></div>
+          </div>
+          <span className="runner-text">กำลังโหลด...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="workout-page">
+      {/* Top Header with Exercise Info */}
+      <div className="workout-header">
+        <div className="header-left">
+          <button className="back-btn" onClick={() => navigate('/trainee')}>
+            ← กลับ
+          </button>
+          <h1 className="exercise-name">
+            {segments.length > 0 ? segments[currentSegment]?.exercise_name || 'Chair-Assisted Squats' : 'Chair-Assisted Squats'}
+          </h1>
+        </div>
+        
+        <div className="header-center">
+          <div className="feedback-status">Excellent!</div>
+        </div>
+        
+        <div className="header-right">
+          <div className="timer">0:22</div>
+          <div className="rounds">
+            {segments.length > 0 ? `${currentSegment + 1}/${segments.length}` : '9/15'}
+          </div>
+        </div>
+      </div>
+
+      {/* Main workout area */}
+      <div className="workout-container">
+        {/* Left: Trainee camera with keypoints */}
+        <div className="trainee-panel">
+          <div className="video-container trainee-container">
+            {!userRequestedCamera ? (
+              <div className="camera-permission-request">
+                <div className="camera-icon">📷</div>
+                <h3>เปิดกล้องเพื่อเริ่มออกกำลังกาย</h3>
+                <p>ระบบจะใช้กล้องเพื่อตรวจจับท่าของคุณและให้คะแนน</p>
+                <button 
+                  className="enable-camera-btn"
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    zIndex: 9999,
+                    position: 'relative',
+                    pointerEvents: 'auto'
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Button clicked!');
+                    requestCameraPermission();
+                  }}
+                  onMouseDown={(e) => {
+                    console.log('Button mouse down!');
+                  }}
+                  onTouchStart={(e) => {
+                    console.log('Button touch start!');
+                  }}
+                >
+                  🎥 เปิดกล้อง
+                </button>
+                <div className="camera-info">
+                  <small>เราจะไม่บันทึกหรือส่งข้อมูลวิดีโอของคุณไปยังเซิร์ฟเวอร์</small>
+                </div>
+              </div>
+            ) : cameraPermissionState === 'requesting' ? (
+              <div className="camera-loading">
+                <div className="loading-spinner">📷</div>
+                <div>กำลังขออนุญาตใช้กล้อง...</div>
+                <div style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+                  กรุณาอนุญาตการใช้งานกล้องในป๊อปอัป
+                </div>
+              </div>
+            ) : cameraPermissionState === 'denied' || cameraError ? (
+              <div className="camera-error">
+                <div className="error-icon">❌</div>
+                <div className="error-message">{cameraError || 'ไม่ได้รับอนุญาตใช้กล้อง'}</div>
+                <div style={{ fontSize: '14px', color: '#666', margin: '10px 0' }}>
+                  วิธีแก้ไข:
+                  <ol style={{ textAlign: 'left', paddingLeft: '20px' }}>
+                    <li>คลิก 🔒 หรือ 📷 ใกล้ URL บาร์</li>
+                    <li>เลือก "อนุญาต" สำหรับกล้อง</li>
+                    <li>รีเฟรชหน้าเว็บ</li>
+                  </ol>
+                </div>
+                <button 
+                  className="retry-btn"
+                  onClick={() => window.location.reload()}
+                >
+                  รีเฟรชหน้า
+                </button>
+                <button 
+                  className="retry-btn"
+                  onClick={requestCameraPermission}
+                  style={{ marginLeft: '10px', background: '#3b82f6' }}
+                >
+                  ลองอีกครั้ง
+                </button>
+              </div>
+            ) : cameraStream ? (
+              <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                {console.log('🎬 Rendering video with stream:', !!cameraStream)}
+                <video
+                  ref={traineeVideoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="trainee-video"
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover',
+                    transform: 'scaleX(-1)'  // Mirror the video horizontally
+                  }}
+                  onLoadedMetadata={() => {
+                    console.log('📹 Video metadata loaded');
+                  }}
+                  onCanPlay={() => {
+                    console.log('📹 Video can play');
+                  }}
+                  onPlaying={() => {
+                    console.log('📹 Video is playing');
+                  }}
+                  onError={(e) => {
+                    console.error('📹 Video error:', e);
+                  }}
+                />
+                {isInitialized && (
+                  <KeypointOverlay
+                    videoRef={traineeVideoRef}
+                    isPlaying={true}
+                    onKeypointsDetected={handleTraineeKeypoints}
+                    mirrorKeypoints={true}
+                  />
+                )}
+                <div className="section-label live-label">
+                  <span className="live-indicator">🔴 LIVE</span>
+                </div>
+              </div>
+            ) : (
+              <div className="camera-loading">
+                <div className="running-loader">
+                  <div className="runner">
+                    <div className="head"></div>
+                    <div className="torso"></div>
+                    <div className="arm arm-right"></div>
+                    <div className="arm arm-left"></div>
+                    <div className="leg leg-right"></div>
+                    <div className="leg leg-left"></div>
+                    <div className="shadow"></div>
+                  </div>
+                  <span className="runner-text">กำลังเปิดกล้อง...</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Center: Vertical Accuracy Bar with Section Info */}
+        <div className="accuracy-section">
+          <div className="accuracy-bar-container">
+            <div className="accuracy-bar">
+              <div 
+                className="accuracy-fill" 
+                style={{ height: `${matchScore}%` }}
+              ></div>
+            </div>
+            <div className="accuracy-percentage">
+              {matchScore.toFixed(1)}%
+            </div>
+          </div>
+          
+          {/* Section Information Panel */}
+          <div className="section-info-panel">
+            {currentSection && (
+              <>
+                <div className="current-section">
+                  <div className="section-title">🎯 Current Exercise</div>
+                  <div className="section-name">{currentSection}</div>
+                </div>
+                
+                {sectionScore && sectionScore.bodyPartScores && (
+                  <div className="body-part-scores">
+                    <div className="scores-title">Body Part Scores:</div>
+                    {Object.entries(sectionScore.bodyPartScores).map(([part, score]) => (
+                      <div key={part} className="body-part-score">
+                        <span className="part-name">{part}:</span>
+                        <span className="part-score">{score.toFixed(1)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {!sectionScore?.hasMovement && (
+                  <div className="movement-status">
+                    ⏸️ Waiting for movement...
+                  </div>
+                )}
+              </>
+            )}
+            
+            {!currentSection && segments.length > 0 && (
+              <div className="section-waiting">
+                <div className="section-title">📹 Video Sections</div>
+                <div className="sections-list">
+                  {segments.map((segment, index) => (
+                    <div key={index} className="segment-item">
+                      {segment.exercise_type} ({segment.start_time}s - {segment.end_time}s)
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {segments.length === 0 && (
+              <div className="no-sections">
+                ⚠️ No sections defined for this video
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Trainer video */}
+        <div className="trainer-panel">
+          <div className="video-container trainer-container">
+            <video
+              ref={trainerVideoRef}
+              src={(() => {
+                // Helper function to get video URL with CORS handling
+                const getVideoUrl = (url) => {
+                  if (!url) return 'http://localhost:8000/static/fitness%20app_V1-0007_480.mp4';
+                  
+                  // If it's a full HTTP/HTTPS URL (S3, external), use proxy
+                  if (/^https?:\/\//i.test(url)) {
+                    // Check if it's S3 or external URL that might have CORS issues
+                    if (url.includes('s3.') || url.includes('amazonaws.com')) {
+                      return `http://localhost:8000/video-proxy?url=${encodeURIComponent(url)}`;
+                    }
+                    return url; // Use direct URL for other sources
+                  }
+                  
+                  // If it's a relative path, use static endpoint
+                  return `http://localhost:8000/static/${encodeURIComponent(url.replace(/^.*[\\\/]/, ''))}`;
+                };
+
+                // Try different fields in order of preference
+                return videoData?.s3_url 
+                  ? getVideoUrl(videoData.s3_url)
+                  : videoData?.image 
+                    ? getVideoUrl(videoData.image)
+                    : videoData?.video_url 
+                      ? getVideoUrl(videoData.video_url)
+                      : videoData?.file_path
+                        ? getVideoUrl(videoData.file_path)
+                        : 'http://localhost:8000/static/fitness%20app_V1-0007_480.mp4';
+              })()}
+              className="trainer-video"
+              controls
+              onPlay={() => {
+                console.log('🎬 Video started playing');
+                setIsPlaying(true);
+              }}
+              onPause={() => {
+                console.log('⏸️ Video paused');
+                setIsPlaying(false);
+              }}
+              onCanPlay={() => {
+                console.log('🎬 Video ready to play');
+              }}
+              onLoadedData={() => {
+                console.log('🎬 Video data loaded successfully');
+              }}
+              onError={(e) => {
+                console.error('Trainer video error:', e);
+                console.log('Video data:', videoData);
+                console.log('Attempting to load video from URL:', e.target.src);
+                setIsPlaying(false);
+              }}
+              onAbort={() => {
+                console.log('🚫 Video loading aborted');
+                setIsPlaying(false);
+              }}
+              onLoadStart={() => {
+                console.log('Trainer video loading:', videoData?.s3_url || videoData?.image);
+                const getVideoUrl = (url) => {
+                  if (!url) return 'http://localhost:8000/static/fitness%20app_V1-0007_480.mp4';
+                  
+                  if (/^https?:\/\//i.test(url)) {
+                    if (url.includes('s3.') || url.includes('amazonaws.com')) {
+                      return `http://localhost:8000/video-proxy?url=${encodeURIComponent(url)}`;
+                    }
+                    return url;
+                  }
+                  
+                  return `http://localhost:8000/static/${encodeURIComponent(url.replace(/^.*[\\\/]/, ''))}`;
+                };
+
+                const finalSrc = videoData?.s3_url 
+                  ? getVideoUrl(videoData.s3_url)
+                  : videoData?.image 
+                    ? getVideoUrl(videoData.image)
+                    : videoData?.video_url 
+                      ? getVideoUrl(videoData.video_url)
+                      : videoData?.file_path
+                        ? getVideoUrl(videoData.file_path)
+                        : 'http://localhost:8000/static/fitness%20app_V1-0007_480.mp4';
+                        
+                console.log('📺 Final video src:', finalSrc);
+              }}
+              crossOrigin="anonymous"
+            />
+            <div className="section-label playing-label">
+              <span className="trainer-indicator">🎯 PLAYING</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Controls */}
+      <div className="bottom-controls">
+        <button 
+          className={`pause-btn ${isPlaying ? 'playing' : ''}`}
+          onClick={togglePlayPause}
+        >
+          {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+        </button>
+        
+        {!userRequestedCamera && (
+          <button 
+            className="enable-camera-btn-bottom"
+            onClick={requestCameraPermission}
+            style={{
+              marginLeft: '10px',
+              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            � เปิดกล้องเพื่อเริ่มออกกำลังกาย
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default WorkoutPage;

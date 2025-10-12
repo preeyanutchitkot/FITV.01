@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="200" cy="150" r="120" fill="#EEF2FF" opacity="0.5"/>
+    <circle cx="200" cy="150" r="80" fill="#E0E7FF" opacity="0.3"/>
+    
+    <!-- User Icon -->
+    <circle cx="200" cy="120" r="35" fill="#4F46E5"/>
+    <circle cx="200" cy="110" r="15" fill="#818CF8"/>
+    <path d="M165 170C165 150 182 140 200 140C218 140 235 150 235 170" fill="#4F46E5"/>
+    
+    <!-- Lock Icon -->
+    <rect x="185" y="180" width="30" height="25" rx="5" fill="#4F46E5"/>
+    <rect x="195" y="165" width="10" height="15" rx="5" fill="#4F46E5"/>
+    
+    <!-- Sparkles -->
+    <circle cx="150" cy="100" r="3" fill="#4F46E5"/>
+    <circle cx="250" cy="100" r="3" fill="#4F46E5"/>
+    <circle cx="150" cy="200" r="3" fill="#4F46E5"/>
+    <circle cx="250" cy="200" r="3" fill="#4F46E5"/>
+</svg> 

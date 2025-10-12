@@ -1,0 +1,88 @@
+/* Alerts (Rejected feedback) */
+.uv-alert {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+
+.uv-alert-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.uv-alert-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: #991b1b;
+}
+.uv-alert-body {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: #7f1d1d;
+}
+.uv-alert-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Buttons */
+.uv-btn { border: none; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; }
+.uv-btn-md { padding: 10px 16px; font-weight: 700; border-radius: 10px; }
+.uv-btn-with-icon { display: inline-flex; align-items: center; gap: 8px; }
+.uv-btn-primary { background: linear-gradient(90deg,#ff4d8b 0%, #a855f7 100%); color: #fff; }
+.uv-btn-primary:disabled,
+.uv-btn-md:disabled { opacity: .7; cursor: not-allowed; }
+
+.uv-btn-outline { border: 1.5px solid #e5e7eb; background: #fff; color: #6b7280; border-radius: 999px; }
+.uv-btn-neutral { background: #e5e7eb; color: #111827; border: none; border-radius: 10px; }
+.uv-btn-gradient { background: linear-gradient(90deg,#ff4d8b 0%, #a855f7 100%); color: #fff; border: none; border-radius: 10px; }
+.uv-btn-pill { display:flex; align-items:center; gap:8px; background:linear-gradient(90deg,#a855f7 0%, #ff4d8b 100%); color:#fff; font-weight:700; border:none; border-radius:999px; padding:8px 22px 8px 16px; font-size:1.08rem; box-shadow:0 2px 8px #a855f733; cursor:pointer; }
+
+.uv-icon { width: 20px; height: 20px; margin-right: 6px; vertical-align: middle; }
+
+/* Inputs */
+.uv-label { display: block; font-weight: 700; margin-bottom: 6px; }
+.uv-input, .uv-select {
+  padding: 10px 12px; border-radius: 8px; border: 1px solid #e5e7eb; outline: none; background: #fff;
+}
+.uv-select { background: #fff; }
+
+/* Dropzone */
+.uv-dropzone {
+  border: 2px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 36px 20px;
+  text-align: center;
+  color: #6b7280;
+  background: #f8fafc;
+}
+.uv-dropzone-title {
+  font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 6px;
+}
+
+/* Info cards */
+.uv-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 16px;
+  margin-top: 14px;
+}
+.uv-info-title { font-weight: 700; color: #111827; margin-bottom: 6px; }
+.uv-info-desc { font-size: 13px; color: #6b7280; line-height: 1.4; }
+
+/* Preview placeholder */
+.uv-preview-placeholder {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}

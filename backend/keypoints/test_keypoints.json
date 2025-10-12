@@ -1,0 +1,40 @@
+[
+  {
+    "frame_index": 0,
+    "timestamp": 1.0,
+    "keypoints": [
+      {
+        "x": 0.5,
+        "y": 0.3,
+        "z": 0.1,
+        "visibility": 0.9
+      },
+      {
+        "x": 0.6,
+        "y": 0.4,
+        "z": 0.2,
+        "visibility": 0.8
+      }
+    ],
+    "pose_detected": true
+  },
+  {
+    "frame_index": 1,
+    "timestamp": 2.0,
+    "keypoints": [
+      {
+        "x": 0.52,
+        "y": 0.32,
+        "z": 0.12,
+        "visibility": 0.85
+      },
+      {
+        "x": 0.62,
+        "y": 0.42,
+        "z": 0.22,
+        "visibility": 0.75
+      }
+    ],
+    "pose_detected": true
+  }
+]

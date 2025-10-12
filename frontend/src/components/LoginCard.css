@@ -1,0 +1,152 @@
+.login-card-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  font-family: system-ui, sans-serif;
+}
+
+.login-card {
+  background: #fff;
+  max-width: 420px;
+  width: 100%;
+  padding: 32px 28px 28px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(30,41,59,0.13), 0 2px 8px 0 rgba(168,85,247,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-card-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 12px 0 #a855f722;
+}
+
+.login-card-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #23272e;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.login-card-subtitle {
+  font-size: 1.05rem;
+  color: #64748b;
+  text-align: center;
+  margin-bottom: 28px;
+  margin-top: 0;
+  line-height: 1.5;
+}
+
+.login-card-google-btn {
+  width: 100%;
+  height: 56px;
+  background: #fff;
+  color: #222;
+  border: none;
+  border-radius: 28px;
+  font-size: 1.13rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  box-shadow: 0 2px 8px 0 rgba(30,41,59,0.10);
+  letter-spacing: 0.01em;
+  padding: 0 24px;
+  margin-bottom: 32px;
+  transition: background 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+.login-card-google-btn:focus {
+  box-shadow: 0 0 0 2px #a855f7, 0 2px 8px 0 rgba(30,41,59,0.10);
+}
+.login-card-google-btn:hover {
+  background: #f8fafc;
+}
+.login-card-google-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+.login-card-google-text {
+  font-size: 1.09rem;
+  font-weight: 600;
+  color: #222;
+  flex: 1;
+  text-align: left;
+}
+
+.login-card-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  margin-top: -10px;
+}
+.login-card-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+  border-radius: 1px;
+}
+.login-card-divider-text {
+  font-size: 0.93rem;
+  color: #94a3b8;
+  margin: 0 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.login-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 2px;
+}
+.login-card-shield {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+}
+.login-card-footer-text {
+  font-size: 0.93rem;
+  color: #94a3b8;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 500px) {
+  .login-card {
+    padding: 18px 6vw 18px 6vw;
+    border-radius: 14px;
+  }
+  .login-card-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+  }
+  .login-card-title {
+    font-size: 1.4rem;
+  }
+  .login-card-google-btn {
+    height: 48px;
+    border-radius: 24px;
+    font-size: 1rem;
+  }
+  .login-card-google-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
