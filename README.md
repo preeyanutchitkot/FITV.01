@@ -104,43 +104,7 @@ GRANT ALL PRIVILEGES ON DATABASE fitaddict_db TO fitaddict_user;
 
 ### 5. ตั้งค่า Environment Variables
 
-สร้างไฟล์ `.env` จาก `.env.example`:
 
-```bash
-cp .env.example .env
-```
-
-แก้ไขไฟล์ `.env`:
-
-```env
-# Database Configuration
-DATABASE_URL=postgresql://fitaddict_user:your_password@localhost:5432/fitaddict_db
-
-# Session Secret (สร้าง random string)
-SESSION_SECRET=your-secret-session-key-here-32-characters-long
-
-# JWT Secret (สร้าง random string)
-JWT_SECRET=your-jwt-secret-key-here-32-characters-long
-
-# Google OAuth (สำหรับ login)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-# Gemini AI (สำหรับ pose analysis)
-GEMINI_API_KEY=your-gemini-api-key
-
-# Email Configuration (ถ้าใช้)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USERNAME=your-email@gmail.com
-EMAIL_PASSWORD=your-app-password
-
-# AWS S3 (สำหรับเก็บไฟล์)
-AWS_ACCESS_KEY_ID=your-aws-access-key
-AWS_SECRET_ACCESS_KEY=your-aws-secret-key
-AWS_BUCKET_NAME=your-bucket-name
-AWS_REGION=us-east-1
-```
 
 ### 6. Database Migration
 
